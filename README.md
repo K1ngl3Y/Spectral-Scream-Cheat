@@ -7,7 +7,7 @@
    - Chapter-by-chapter teleportation
    - Character Teleportation
  + Game:
-    - Setting Health
+    - Setting Health (Enable Health Hack and press H)
     - Cheat on coins found on the map
     - Invisibility from enemies
     - Setting the speed of movement
