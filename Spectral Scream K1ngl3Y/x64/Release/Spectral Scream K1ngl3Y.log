@@ -1,0 +1,10 @@
+﻿  buffer.c
+  hde32.c
+  hde64.c
+  hook.c
+  trampoline.c
+  Создание кода
+  Previous IPDB not found, fall back to full compilation.
+  All 1121 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Создание кода завершено
+  Spectral Scream K1ngl3Y.vcxproj -> D:\Programms\Programms\hacks\Create\x64\Release\Spectral Scream K1ngl3Y.dll
