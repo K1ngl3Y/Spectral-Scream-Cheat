@@ -21,3 +21,6 @@
  + Enable the Enable Teleport HotKeys feature
  + Press spacebar + Shift to teleport up or down (depending on whether you are sitting or not)
  + Hold down the spacebar + arrows to teleport in other directions
+
+# Credits
+ + Thanks rdbo for menu https://github.com/rdbo/ImGui-DirectX-11-Kiero-Hook
