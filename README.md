@@ -1,5 +1,5 @@
 # Spectral Scream cheat
- + Performance was tested on Steam version of the game 1.0.13 c
+ + Performance was tested on Steam version of the game 1.0.13e
  + Modification for the game Spectral Scream
  + The project code is written without in-depth knowledge of C++, which is why a lot of code written badly
 # Features:
