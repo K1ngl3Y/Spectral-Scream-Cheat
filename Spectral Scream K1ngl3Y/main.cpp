@@ -1,5 +1,5 @@
 #include "includes.h"
-//@Version 1.0.1
+//@Version 1.0.2
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -38,7 +38,7 @@ enum ItemType
 	hpPotion = 20,
 	Resist = 30,
 	Exorcize = 40, // Crash
-	ExorcizeGoods = 50, // Crash
+	ExorcizeGöôoods = 50, // Crash
 	Key = 60,
 	ChapterKey = 70, 
 	Basic = 80, // Crash
@@ -76,7 +76,8 @@ enum ItemType
 	Gimmick_Key = 400,
 	Rune = 410,
 	Hourglass = 420,
-	Ragdoll = 430
+	Ragdoll = 430,
+	Soulfly = 440
 };
 
 enum CheatActionType {
@@ -91,7 +92,7 @@ enum CheatActionType {
 };
 
 void Install(CheatActionType action, int intData = 0) {
-	auto HardwareRigClass = *(uintptr_t*)(*(uintptr_t*)(GameAssemblyCheat + 0x05110A28) + 0xB8);
+	auto HardwareRigClass = *(uintptr_t*)(*(uintptr_t*)(GameAssemblyCheat + 0x5144148) + 0xB8);
 	if (!HardwareRigClass) return;
 
 	auto HardwareRig = *(uintptr_t*)(HardwareRigClass + 0x0);
@@ -124,23 +125,22 @@ void Install(CheatActionType action, int intData = 0) {
 
 	if (GetAsyncKeyState('R') & 0x8000) // Hold R to fall down
 	{
-		auto ResetPosition = reinterpret_cast<void(*)(uintptr_t)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0xA44C20));
+		auto ResetPosition = reinterpret_cast<void(*)(uintptr_t)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0xA46E30));
 		if (!ResetPosition) return;
 		ResetPosition(HardwareCharacterController);
 	}
 	if ((GetKeyState(VK_SPACE) & 0x8000) && tp_hotkeys)
 	{
-
-		auto playerPos = reinterpret_cast<Vector3(*)(uintptr_t)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0xA434B0));
-		if (!playerPos) return;
+		auto GetBodyTargetPosition = reinterpret_cast<Vector3(*)(uintptr_t)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0xA456C0));
+		if (!GetBodyTargetPosition) return;
 
 		auto HardwareRigLocalPlayer = *(uintptr_t*)(NetworkRig + 0xA0);
 		if (!HardwareRigLocalPlayer)return;
 
-		auto Teleport = reinterpret_cast<void(*)(uintptr_t, Vector3)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x9748A0));
+		auto Teleport = reinterpret_cast<void(*)(uintptr_t, Vector3)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x97DA20));
 		if (!Teleport) return;
 
-		Vector3 bodyPosition = playerPos(HardwareCharacterController);
+		Vector3 bodyPosition = GetBodyTargetPosition(HardwareCharacterController);
 
 		if (GetKeyState(VK_SHIFT) & 0x8000) {
 			bodyPosition.y -= 1.5;
@@ -163,7 +163,7 @@ void Install(CheatActionType action, int intData = 0) {
 			Teleport(HardwareRigLocalPlayer, bodyPosition);
 		}
 	}
-	if (GetAsyncKeyState('K') & 0x8000) // Hold R to fall down
+	if (GetAsyncKeyState('K') & 0x8000)
 	{
 		/*auto IamIronman = reinterpret_cast<void(*)()>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7FB140));
 		if (!IamIronman) return;
@@ -174,12 +174,41 @@ void Install(CheatActionType action, int intData = 0) {
 
 		StopCreatures();*/
 	}
+	if (GetKeyState(VK_OEM_3) & 0x8000)
+	{
+		// Cursor lock
+		//auto DesktopCameraController = *(uintptr_t*)(*(uintptr_t*)(GameAssemblyCheat + 0x518B6E8) + 0xB8);
+		//if (!DesktopCameraController) return;
+
+		//auto DesktopCameraControllerInstance = *(uintptr_t*)(DesktopCameraController + 0x0);
+		//if (!DesktopCameraControllerInstance)return;
+
+		//bool locked = *(bool*)((uintptr_t)DesktopCameraControllerInstance + 0xB4);
+
+		//auto CursorLockToggle = reinterpret_cast<void(*)(uintptr_t)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x96F890));
+		//if (!CursorLockToggle) return;
+
+		//CursorLockToggle(DesktopCameraControllerInstance);
+
+		//auto CursorClass = *(uintptr_t*)(*(uintptr_t*)(GameAssemblyCheat + 0x5178E88) + 0xB8);
+		//if (!CursorClass) return;
+
+		//auto CursorVisible = reinterpret_cast<void(*)(bool)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x3BCA970));
+		//if (!CursorVisible) return;
+
+		//if (!locked) {
+		//	CursorVisible(false);
+		//}
+		//else {
+		//	CursorVisible(true);
+		//}
+	}
 
 	switch (action)
 	{
 	case InvisibleMode:
 	{
-		auto Revival = reinterpret_cast<void(*)(uintptr_t, bool)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7AF8A0));
+		auto Revival = reinterpret_cast<void(*)(uintptr_t, bool)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7B71F0));
 		if (!Revival) return;
 
 		Revival(PlayerState, true);
@@ -188,13 +217,13 @@ void Install(CheatActionType action, int intData = 0) {
 	case Skin:
 	{
 		if (intData == 0) { // Tank
-			auto RPC_IamTankRider = reinterpret_cast<void(*)(PTR)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x9787C0));
+			auto RPC_IamTankRider = reinterpret_cast<void(*)(PTR)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x981940));
 			if (!RPC_IamTankRider) return;
 
 			RPC_IamTankRider(NetworkRig);
 		}
 		else if (intData == 1) { // Saiyan
-			auto RPC_IamSaiyan = reinterpret_cast<void(*)(PTR)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x978590));
+			auto RPC_IamSaiyan = reinterpret_cast<void(*)(PTR)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x981710));
 			if (!RPC_IamSaiyan) return;
 
 			RPC_IamSaiyan(NetworkRig);
@@ -204,12 +233,12 @@ void Install(CheatActionType action, int intData = 0) {
 	case Teleport:
 	{
 		if (intData == 999) {
-			auto CheatTeleport_To_Outside = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x9797A0));
+			auto CheatTeleport_To_Outside = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x982920));
 			if (!CheatTeleport_To_Outside) return;
 			CheatTeleport_To_Outside(NetworkRig, 1);
 		}
 		else {
-			auto CheatTeleport_To_Chapter = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x979520));
+			auto CheatTeleport_To_Chapter = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x9826A0));
 			if (!CheatTeleport_To_Chapter) return;
 			CheatTeleport_To_Chapter(NetworkRig, intData);
 		}
@@ -218,14 +247,14 @@ void Install(CheatActionType action, int intData = 0) {
 
 	case CompleteChapter:
 	{
-		auto CompleteGimmick = reinterpret_cast<void(*)(int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7FB700));
+		auto CompleteGimmick = reinterpret_cast<void(*)(int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x803660));
 		if (!CompleteGimmick) return;
 		CompleteGimmick(intData);
 		break;
 	}
 	case GetFoundCoins:
 	{
-		auto RPC_TakePocket = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7AD930));
+		auto RPC_TakePocket = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7B5280));
 		if (!RPC_TakePocket) return;
 
 		RPC_TakePocket(PlayerState, found_coins);
@@ -234,7 +263,7 @@ void Install(CheatActionType action, int intData = 0) {
 
 	case SetAccountXP:
 	{
-		auto SetEXP = reinterpret_cast<void(*)(long)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7FB320));
+		auto SetEXP = reinterpret_cast<void(*)(long)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x803280));
 		if (!SetEXP) return;
 
 		SetEXP(account_xp);
@@ -242,9 +271,9 @@ void Install(CheatActionType action, int intData = 0) {
 		break;
 	case SpawnItem:
 	{
-		auto Sapwn_Item_Type = reinterpret_cast<void(*)(int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7FBBA0));
+		auto Sapwn_Item_Type = reinterpret_cast<void(*)(int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x803B00));
 		if (!Sapwn_Item_Type) return;
-		if (spawn_item_id >= 10 && spawn_item_id <= 430 && spawn_item_id % 10 == 0) {
+		if (spawn_item_id >= 10 && spawn_item_id <= 440 && spawn_item_id % 10 == 0) {
 			try
 			{
 				Sapwn_Item_Type(spawn_item_id);
@@ -323,7 +352,6 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 	ImGui::SetCursorPos({ 10.f,90.f });
 	if (ImGui::Button("Chapter 1", { 71.f,19.f }))
 	{
-
 		action_teleport ? Install(Teleport, 1) : Install(CompleteChapter, 1);
 	}
 	ImGui::SetCursorPos({ 85.f,90.f });
@@ -356,32 +384,38 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 		Install(GetFoundCoins);
 	}
 	ImGui::SetCursorPos({ 130.f,127.f });
-	ImGui::PushItemWidth(235.000000);
+	ImGui::PushItemWidth(155.000000);
 	ImGui::InputInt("Coins count", &found_coins, 100, 1000);
 	ImGui::PopItemWidth();
+
 	ImGui::SetCursorPos({ 11.f,202.f });
-	ImGui::PushItemWidth(356.000000);
+	ImGui::PushItemWidth(260.000000);
 	ImGui::SliderInt("Stamina Cost", &stamina_cost, 0, 100);
 	ImGui::PopItemWidth();
+
 	ImGui::SetCursorPos({ 10.f,225.f });
-	ImGui::PushItemWidth(179.000000);
-	ImGui::SliderFloat("Run Speed", &run_speed, 0, 100);
+	ImGui::PushItemWidth(110.000000);
+	ImGui::SliderFloat("Run Speed", &run_speed, 0, 30, "%.1f");
 	ImGui::PopItemWidth();
-	ImGui::SetCursorPos({ 192.f,225.f });
-	ImGui::PushItemWidth(175.000000);
-	ImGui::SliderFloat("Move Speed", &move_speed, 0, 100);
+
+	ImGui::SetCursorPos({ 190.f,225.f });
+	ImGui::PushItemWidth(105.000000);
+	ImGui::SliderFloat("Move Speed", &move_speed, 0, 30, "%.1f");
 	ImGui::PopItemWidth();
+
 	ImGui::SetCursorPos({ 10.f,165.f });
 	ImGui::Checkbox("Enable Health Hack", &hp_hack);
+
 	ImGui::SetCursorPos({ 185.f,165.f });
 	ImGui::Checkbox("Enable Teleport HotKeys", &tp_hotkeys);
+
 	ImGui::SetCursorPos({ 11.f,256.f });
 	if (ImGui::Button("Set account xp", { 107.f,19.f }))
 	{
 		Install(SetAccountXP);
 	}
 	ImGui::SetCursorPos({ 124.f,256.f });
-	ImGui::PushItemWidth(244.000000);
+	ImGui::PushItemWidth(230.000000);
 	ImGui::InputInt("XP", &account_xp, 100, 1000);
 	ImGui::PopItemWidth();
 
@@ -401,88 +435,9 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 		Install(SpawnItem);
 	}
 	ImGui::SetCursorPos({ 174.f,280.f });
-	ImGui::PushItemWidth(191.000000);
+	ImGui::PushItemWidth(180.000000);
 	ImGui::InputInt("ID", &spawn_item_id, 10, 10);
 	ImGui::PopItemWidth();
-	//ImGui::SetCursorPos({ 10.f,30.f });
-	//if (ImGui::Button("Invisible Mode", { 117.f,29.f }))
-	//{
-	//	//InvisibleMode();
-	//	Install(InvisibleMode);
-	//}
-	//ImGui::SetCursorPos({ 131.f,30.f });
-	//if (ImGui::Button("Skin Tanker", { 117.f,29.f }))
-	//{
-	//	//TankerSkin();
-	//	Install(Skin, 0);
-	//}
-	//ImGui::SetCursorPos({ 252.f,30.f });
-	//if (ImGui::Button("Skin Sayan", { 117.f,29.f }))
-	//{
-	//	//Sayan();
-	//	Install(Skin, 1);
-	//}
-	//ImGui::SetCursorPos({ 10.f,78.f });
-	//if (ImGui::Button("Chapter 1", { 71.f,19.f }))
-	//{
-	//	//TpToChapter(1);
-	//	Install(Teleport, 1);
-	//}
-	//ImGui::SetCursorPos({ 85.f,78.f });
-	//if (ImGui::Button("Chapter 2", { 71.f,19.f }))
-	//{
-	//	//TpToChapter(2);
-	//	Install(Teleport, 2);
-	//}
-	//ImGui::SetCursorPos({ 160.f,78.f });
-	//if (ImGui::Button("Chapter 3", { 71.f,19.f }))
-	//{
-	//	//TpToChapter(3);
-	//	Install(Teleport, 3);
-	//}
-	//ImGui::SetCursorPos({ 235.f,78.f });
-	//if (ImGui::Button("Chapter 4", { 71.f,19.f }))
-	//{
-	//	//TpToChapter(4);
-	//	Install(Teleport, 4);
-	//}
-	//ImGui::SetCursorPos({ 310.f,78.f });
-	//if (ImGui::Button("Lobby", { 60.f,19.f }))
-	//{
-	//	//TpToChapter(999);
-	//	Install(Teleport, 999);
-	//}
-	//ImGui::SetCursorPos({ 154.f,62.f });
-	//ImGui::PushItemWidth(77.000000);
-	//ImGui::Text("Teleport to");
-	//ImGui::PopItemWidth();
-	//ImGui::SetCursorPos({ 10.f,107.f });
-	//if (ImGui::Button("Get found Coins", { 114.f,27.f }))
-	//{
-	//	//AddLevelCoinsFound();
-	//	Install(GetFoundCoins);
-	//}
-	//ImGui::SetCursorPos({ 137.f,111.f });
-	//ImGui::PushItemWidth(228.000000);
-	//ImGui::InputInt("Coins count", &found_coins, 100, 1000);
-	//ImGui::PopItemWidth();
-	//ImGui::SetCursorPos({ 11.f,202.f });
-	//ImGui::PushItemWidth(356.000000);
-	//ImGui::SliderInt("Stamina Cost", &stamina_cost, 0, 100);
-	//ImGui::PopItemWidth();
-	//ImGui::SetCursorPos({ 10.f,225.f });
-	//ImGui::PushItemWidth(179.000000);
-	//ImGui::SliderFloat("Run Speed", &run_speed, 0, 30);
-	//ImGui::PopItemWidth();
-	//ImGui::SetCursorPos({ 10.f,248.f });
-	//ImGui::PushItemWidth(179.000000);
-	//ImGui::SliderFloat("Move Speed", &move_speed, 0, 30);
-	//ImGui::PopItemWidth();
-	//ImGui::SetCursorPos({ 10.f,150.f });
-	//ImGui::Checkbox("Enable Health Hack", &hp_hack);
-	//ImGui::SetCursorPos({ 185.f,150.f });
-	//ImGui::Checkbox("Enable Teleport HotKeys", &tp_hotkeys);
-
 
 	ImGui::End();
 
