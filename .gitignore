@@ -26,9 +26,12 @@
 *.a
 *.lib
 
+
 # Executables
 *.exe
 *.out
 *.app
-.vs/*
 Spectral Scream K1ngl3Y/x64/*
+.vs
+/.vs
+.vs/*
