@@ -93,7 +93,7 @@ enum CheatActionType {
 };
 
 void Install(CheatActionType action, int intData = 0) {
-	auto HardwareRigClass = *(uintptr_t*)(*(uintptr_t*)(GameAssemblyCheat + 0x514F510) + 0xB8); 
+	auto HardwareRigClass = *(uintptr_t*)(*(uintptr_t*)(GameAssemblyCheat + 0x511D698) + 0xB8);
 	if (!HardwareRigClass) return;
 
 	auto HardwareRig = *(uintptr_t*)(HardwareRigClass + 0x0);
@@ -111,13 +111,13 @@ void Install(CheatActionType action, int intData = 0) {
 	auto HardwareCharacterController = *(uintptr_t*)(NetworkRig + 0xF0);
 	if (!HardwareCharacterController)return;
 
-	*(float*)((uintptr_t)HardwareCharacterController + 0x44) = run_speed;
-	*(float*)((uintptr_t)HardwareCharacterController + 0x40) = move_speed;
-	*(float*)((uintptr_t)HardwareCharacterController + 0x54) = stamina_cost;
+	*(float*)((uintptr_t)HardwareCharacterController + 0x44) = run_speed; // float runSpeed;
+	*(float*)((uintptr_t)HardwareCharacterController + 0x40) = move_speed; // float moveSpeed;
+	*(float*)((uintptr_t)HardwareCharacterController + 0x54) = stamina_cost; // float Stamina_Cost
 
 	if (GetAsyncKeyState('H') & 0x8000 && hp_hack)
 	{
-		auto SetHP = reinterpret_cast<void(*)(uintptr_t, float)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7BA510));
+		auto SetHP = reinterpret_cast<void(*)(uintptr_t, float)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7ACC90));
 		if(!SetHP) return;
 
 		*(float*)((uintptr_t)PlayerState + 0x16C) = 10; // Set max health ratio. Default in game 1 == 100 HP. 10 == 1000 HP.
@@ -127,7 +127,7 @@ void Install(CheatActionType action, int intData = 0) {
 
 	if (GetAsyncKeyState('R') & 0x8000) // Hold R to fall down
 	{
-		auto ResetPosition = reinterpret_cast<void(*)(uintptr_t)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0xA43850)); 
+		auto ResetPosition = reinterpret_cast<void(*)(uintptr_t)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0xA31750));
 		if (!ResetPosition) return;
 		ResetPosition(HardwareCharacterController);
 	}
@@ -143,13 +143,13 @@ void Install(CheatActionType action, int intData = 0) {
 	}
 	if ((GetKeyState(VK_SPACE) & 0x8000) && tp_hotkeys)
 	{
-		auto GetBodyTargetPosition = reinterpret_cast<Vector3(*)(uintptr_t)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0xA420E0)); 
+		auto GetBodyTargetPosition = reinterpret_cast<Vector3(*)(uintptr_t)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0xA2FF90));
 		if (!GetBodyTargetPosition) return;
 
 		auto HardwareRigLocalPlayer = *(uintptr_t*)(NetworkRig + 0xA0);
 		if (!HardwareRigLocalPlayer)return;
 
-		auto Teleport = reinterpret_cast<void(*)(uintptr_t, Vector3)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x992280)); 
+		auto Teleport = reinterpret_cast<void(*)(uintptr_t, Vector3)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x986260));
 		if (!Teleport) return;
 
 		Vector3 bodyPosition = GetBodyTargetPosition(HardwareCharacterController);
@@ -220,7 +220,7 @@ void Install(CheatActionType action, int intData = 0) {
 	{
 	case InvisibleMode:
 	{
-		auto Revival = reinterpret_cast<void(*)(uintptr_t, bool)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7BA110)); 
+		auto Revival = reinterpret_cast<void(*)(uintptr_t, bool)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7AC8A0));
 		if (!Revival) return;
 
 		Revival(PlayerState, true);
@@ -229,13 +229,13 @@ void Install(CheatActionType action, int intData = 0) {
 	case Skin:
 	{
 		if (intData == 0) { // Tank
-			auto RPC_IamTankRider = reinterpret_cast<void(*)(PTR)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x999690)); 
+			auto RPC_IamTankRider = reinterpret_cast<void(*)(PTR)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x98CAF0));
 			if (!RPC_IamTankRider) return;
 
 			RPC_IamTankRider(NetworkRig);
 		}
 		else if (intData == 1) { // Saiyan
-			auto RPC_IamSaiyan = reinterpret_cast<void(*)(PTR)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x999460)); 
+			auto RPC_IamSaiyan = reinterpret_cast<void(*)(PTR)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x98C8C0));
 			if (!RPC_IamSaiyan) return;
 
 			RPC_IamSaiyan(NetworkRig);
@@ -245,12 +245,12 @@ void Install(CheatActionType action, int intData = 0) {
 	case Teleport:
 	{
 		if (intData == 999) {
-			auto CheatTeleport_To_Outside = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x99A670)); 
+			auto CheatTeleport_To_Outside = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x98DA40));
 			if (!CheatTeleport_To_Outside) return;
 			CheatTeleport_To_Outside(NetworkRig, 1);
 		}
 		else {
-			auto CheatTeleport_To_Chapter = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x99A3F0)); 
+			auto CheatTeleport_To_Chapter = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x98D850));
 			if (!CheatTeleport_To_Chapter) return;
 			CheatTeleport_To_Chapter(NetworkRig, intData);
 		}
@@ -259,14 +259,14 @@ void Install(CheatActionType action, int intData = 0) {
 
 	case CompleteChapter:
 	{
-		auto CompleteGimmick = reinterpret_cast<void(*)(int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x807090)); 
+		auto CompleteGimmick = reinterpret_cast<void(*)(int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7FB220));
 		if (!CompleteGimmick) return;
 		CompleteGimmick(intData);
 		break;
 	}
 	case GetFoundCoins:
 	{
-		auto RPC_TakePocket = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7B81A0)); 
+		auto RPC_TakePocket = reinterpret_cast<void(*)(PTR, int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7AA950));
 		if (!RPC_TakePocket) return;
 
 		RPC_TakePocket(PlayerState, found_coins);
@@ -275,7 +275,7 @@ void Install(CheatActionType action, int intData = 0) {
 
 	case SetAccountXP:
 	{
-		auto SetEXP = reinterpret_cast<void(*)(long)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x806CB0)); 
+		auto SetEXP = reinterpret_cast<void(*)(long)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7FAE50));
 		if (!SetEXP) return;
 
 		SetEXP(account_xp);
@@ -283,7 +283,7 @@ void Install(CheatActionType action, int intData = 0) {
 		break;
 	case SpawnItem:
 	{
-		auto Sapwn_Item_Type = reinterpret_cast<void(*)(int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x807530)); 
+		auto Sapwn_Item_Type = reinterpret_cast<void(*)(int)>(reinterpret_cast<LPVOID>(GameAssemblyCheat + 0x7FB6C0)); 
 		if (!Sapwn_Item_Type) return;
 		if (spawn_item_id >= 10 && spawn_item_id <= 440 && spawn_item_id % 10 == 0) {
 			try
@@ -301,7 +301,7 @@ void Install(CheatActionType action, int intData = 0) {
 	}
 	case EnableConsole:
 	{
-		auto ChatManager = *(uintptr_t*)(*(uintptr_t*)(GameAssemblyCheat + 0x51A3388) + 0xB8); 
+		auto ChatManager = *(uintptr_t*)(*(uintptr_t*)(GameAssemblyCheat + 0x51715B0) + 0xB8);
 		if (!ChatManager) return;
 
 		auto ChatManagerInstace = *(uintptr_t*)(ChatManager + 0x0);
